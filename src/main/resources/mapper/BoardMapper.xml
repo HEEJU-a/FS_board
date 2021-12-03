@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.fusion.board1.board.BoardMapper">
+ 
+	 <insert id="insBoard">
+	 	INSERT INTO list
+	 	(title, ctnt, nm, iuser)
+	 	VALUES
+	 	(#{title}, #{ctnt}, #{nm}, #{iuser});
+	 </insert>
+	 
+	 <select id="selBoardIdx" resultType="boardVO">
+	 	SELECT iboard
+	 	FROM list
+	 	ORDER BY iboard DESC
+	 	limit 1;
+	 </select>
+	 
+	 <insert id="insertFile">
+	 	INSERT INTO attatchment
+	 	(file_number, iboard, org_file_nm, stored_file_nm, file_size, del_gb, size)
+	 	VALUES
+	 	(#{file_number},#{iboard},#{org_file_nm},#{stored_file_nm},#{file_size},#{del_gb},#{size})
+	 </insert>
+	 
+	 <select id="selBoardList" resultType="boardVO">
+	 	SELECT iboard, title, nm, views, regdt
+	 	FROM list
+	 	WHERE 1 = 1
+	 	<if test="searchType == 1">
+	 		AND title like CONCAT('%',#{searchText},'%') 
+	 		 OR ctnt like CONCAT('%',#{searchText},'%') 
+	 		 OR nm like CONCAT('%',#{searchText},'%')
+	 	</if>
+	 	<if test="searchType == 2">
+	 		AND title like CONCAT('%',#{searchText},'%')
+	 	</if>
+	 	<if test="searchType == 3">
+	 		AND ctnt like CONCAT('%',#{searchText},'%')
+	 	</if>
+	 	<if test="searchType == 4">
+	 		AND nm like CONCAT('%',#{searchText},'%')
+	 	</if>	 	
+	 	ORDER BY iboard DESC
+	 	<if test="recordCnt > 0">
+	 		LIMIT #{startIdx}, #{recordCnt}
+	 	</if>
+	 	
+	 </select>
+	 	 
+	 <select id="selMaxPageVal" resultType="_int">
+	 	SELECT ceil(COUNT(iboard)/#{recordCnt}) FROM list;
+	 </select>
+	 
+	 <select id="selBoard" resultType="boardVO">
+	 	SELECT A.*
+	 	FROM list A
+	 	INNER JOIN user B
+	 	ON A.iuser = B.iuser
+	 	WHERE A.iboard = #{iboard};
+	 </select>
+	 
+	 <delete id="delBoard">
+	 	DELETE
+	 	FROM list
+	 	WHERE iboard = #{iboard}
+	 </delete>
+	 
+	 <update id="updBoard">
+	 	UPDATE list
+	 	SET title= #{title}, ctnt=#{ctnt}
+	 	WHERE iboard = #{iboard}
+	 </update>
+	 <update id="updBoardView">
+	 	UPDATE list
+	 	SET views = views + 1 
+	 	WHERE iboard = #{iboard}
+	 </update>	 
+</mapper>
