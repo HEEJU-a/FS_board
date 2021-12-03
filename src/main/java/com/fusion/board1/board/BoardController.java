@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -72,12 +73,21 @@ public class BoardController {
 	
 	@RequestMapping(value="/writeA", method = RequestMethod.POST)
 		public String writeFormA(BoardVO param, MultipartHttpServletRequest mpRequest, Model model) {
-			service.insBoard(param);
-			BoardVO selBoardIdx = service.selBoardIdx(param);
-			param.setIboard(selBoardIdx.getIboard());
-			service.writeA(param, mpRequest);
+			
+//			List<MultipartFile> mf = mpRequest.getFiles("file");
+			MultipartFile mf = mpRequest.getFile("file");
+			
+			System.out.println(mf.getSize());
+			
+			
+//			service.insBoard(param);
+//			BoardVO selBoardIdx = service.selBoardIdx(param);
+//			param.setIboard(selBoardIdx.getIboard());
+//			service.writeA(param, mpRequest);
 			return "board/writeSuccessA";
 	}
+	
+	
 	
 	@RequestMapping(value="/writeSuccess", method = RequestMethod.GET)
 		public String writeSuccess() {
